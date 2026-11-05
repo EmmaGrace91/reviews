@@ -1,0 +1,146 @@
+:root {
+  --cream: #f7f3ee;
+  --ink: #2a2420;
+  --muted: #6b5e54;
+  --wine: #8b3a3a;
+  --wine-dark: #6f2e2e;
+  --card: #fffdf9;
+  --line: #e5dcd2;
+
+  --serif: Palatino, "Palatino Linotype", "Iowan Old Style", "Book Antiqua",
+    Georgia, "Times New Roman", serif;
+  --sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+
+  --measure: 34rem;
+  --shell: 54rem;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(42, 36, 32, 0.04), 0 8px 28px rgba(42, 36, 32, 0.06);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0 0 1.1em;
+  text-wrap: pretty;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+a {
+  color: var(--wine);
+  text-underline-offset: 0.18em;
+}
+
+a:hover {
+  color: var(--wine-dark);
+}
+
+:focus-visible {
+  outline: 2px solid var(--wine);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.shell {
+  width: min(100% - 2.5rem, var(--shell));
+  margin-inline: auto;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease,
+    border-color 0.18s ease, transform 0.18s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--wine);
+  color: #fffdf9;
+}
+
+.btn-primary:hover {
+  background: var(--wine-dark);
+  color: #fffdf9;
+}
+
+.btn-ghost {
+  background: var(--card);
+  color: var(--wine);
+  border-color: var(--line);
+}
+
+.btn-ghost:hover {
+  border-color: var(--wine);
+  background: rgba(139, 58, 58, 0.05);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .btn:hover {
+    transform: none;
+  }
+}

@@ -1,0 +1,296 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { PERFORMANCE_FORM_URL, SONG_FORM_URL, LINKTREE_URL, SITE } from '../site';
+import { REVIEWS, KIND_LABELS, kindsPresent, creditOf } from '../reviews';
+
+const kinds = kindsPresent(REVIEWS);
+/** Filters only earn their space once there is something to filter. */
+const showFilters = kinds.length > 1;
+const year = new Date().getFullYear();
+---
+
+<Layout>
+  <a class="skip-link visually-hidden" href="#main">Skip to content</a>
+
+  <header class="masthead">
+    <div class="shell">
+      <p class="brand">{SITE.name}</p>
+      <p class="role">{SITE.role}</p>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="intro">
+      <div class="shell">
+        <h1>Reviews</h1>
+        <p class="lede">
+          If I’ve played for you, or written you a song, I’d love to know how it
+          went. It takes two minutes, and you can stay anonymous if you’d rather.
+        </p>
+
+        <div class="choices">
+          <a class="choice" href={PERFORMANCE_FORM_URL} target="_blank" rel="noopener">
+            <span class="choice-label">Review a performance</span>
+            <span class="choice-note">A wedding, a concert, a service, a function</span>
+          </a>
+          <a class="choice" href={SONG_FORM_URL} target="_blank" rel="noopener">
+            <span class="choice-label">Review a song</span>
+            <span class="choice-note">An original song written through Songtales</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    {
+      REVIEWS.length > 0 && (
+        <section class="reviews" aria-labelledby="reviews-heading">
+          <div class="shell">
+            <h2 id="reviews-heading" class="reviews-heading">What people have said</h2>
+
+            {showFilters && (
+              <div class="filters" role="group" aria-label="Filter reviews">
+                <button class="filter" type="button" data-filter="all" aria-pressed="true">
+                  All
+                </button>
+                {kinds.map((kind) => (
+                  <button class="filter" type="button" data-filter={kind} aria-pressed="false">
+                    {KIND_LABELS[kind]}s
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <ul class="review-list" role="list">
+              {REVIEWS.map((review) => (
+                <li class="review" data-kind={review.kind}>
+                  <p class="stars" aria-label={`${review.rating} out of 5 stars`}>
+                    <span aria-hidden="true">
+                      {'★'.repeat(review.rating)}
+                      <span class="stars-empty">{'★'.repeat(5 - review.rating)}</span>
+                    </span>
+                  </p>
+                  <blockquote class="review-body">
+                    <p>{review.body}</p>
+                  </blockquote>
+                  <p class="review-credit">
+                    {creditOf(review)}
+                    {review.occasion && <span class="review-occasion"> · {review.occasion}</span>}
+                    <span class="review-kind">{KIND_LABELS[review.kind]}</span>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )
+    }
+  </main>
+
+  <footer class="footer">
+    <div class="shell">
+      <p>
+        <a href={LINKTREE_URL} target="_blank" rel="noopener">Everything else</a> ·
+        <a href="https://songtales.emmastephensonmusic.com">Songtales</a>
+      </p>
+      <p class="fineprint">© {year} Emma Stephenson</p>
+    </div>
+  </footer>
+
+  <script>
+    const filters = document.querySelectorAll<HTMLButtonElement>('.filter');
+    const reviews = document.querySelectorAll<HTMLLIElement>('.review');
+
+    filters.forEach((button) => {
+      button.addEventListener('click', () => {
+        const wanted = button.dataset.filter;
+        filters.forEach((other) =>
+          other.setAttribute('aria-pressed', String(other === button)),
+        );
+        reviews.forEach((review) => {
+          review.hidden = wanted !== 'all' && review.dataset.kind !== wanted;
+        });
+      });
+    });
+  </script>
+</Layout>
+
+<style>
+  .skip-link:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    clip-path: none;
+    display: inline-block;
+    background: var(--wine);
+    color: #fffdf9;
+    padding: 0.7rem 1.1rem;
+  }
+
+  .masthead {
+    padding-block: 2rem 0;
+  }
+
+  .brand {
+    font-family: var(--serif);
+    font-size: 1.125rem;
+    margin: 0;
+  }
+
+  .role {
+    margin: 0.15rem 0 0;
+    font-size: 0.8125rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .intro {
+    padding-block: clamp(2.5rem, 7vw, 4rem);
+  }
+
+  h1 {
+    font-size: clamp(2.25rem, 7vw, 3.25rem);
+  }
+
+  .lede {
+    max-width: var(--measure);
+    margin-top: 1rem;
+    color: var(--muted);
+  }
+
+  .choices {
+    display: grid;
+    gap: 1rem;
+    margin-top: 2.25rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  }
+
+  .choice {
+    display: block;
+    padding: 1.4rem 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--card);
+    box-shadow: var(--shadow);
+    text-decoration: none;
+    color: var(--ink);
+    transition: border-color 0.18s ease, transform 0.18s ease;
+  }
+
+  .choice:hover {
+    border-color: var(--wine);
+    transform: translateY(-2px);
+    color: var(--ink);
+  }
+
+  .choice-label {
+    display: block;
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    color: var(--wine);
+  }
+
+  .choice-note {
+    display: block;
+    margin-top: 0.3rem;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .reviews {
+    padding-block: clamp(2.5rem, 7vw, 4rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .reviews-heading {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+  }
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .filter {
+    font: inherit;
+    font-size: 0.9375rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .filter[aria-pressed='true'] {
+    background: var(--wine);
+    border-color: var(--wine);
+    color: #fffdf9;
+  }
+
+  .review-list {
+    list-style: none;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .review {
+    padding: 1.4rem 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    background: var(--card);
+    box-shadow: var(--shadow);
+  }
+
+  .review[hidden] {
+    display: none;
+  }
+
+  .stars {
+    margin: 0 0 0.6rem;
+    color: var(--wine);
+    letter-spacing: 0.1em;
+  }
+
+  .stars-empty {
+    color: var(--line);
+  }
+
+  .review-body {
+    margin: 0;
+  }
+
+  .review-credit {
+    margin: 0.9rem 0 0;
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .review-kind {
+    display: inline-block;
+    margin-left: 0.6rem;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .footer {
+    padding-block: 2.5rem 3rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .fineprint {
+    margin-top: 0.4rem;
+    font-size: 0.8125rem;
+  }
+</style>
